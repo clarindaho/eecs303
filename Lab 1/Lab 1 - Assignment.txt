@@ -1,0 +1,26 @@
+Assignment 1:  LED lights sequencing on the Raspberry Pi
+      
+Instructions
+
+1.  Get familiar with the Raspberry Pi:  
+	a) use your account, setup prefs, basic Linux commands, 
+	b) the SD card  (OS, shell, GUI and filesystem).
+	c) the board, the ARM processor, USB, ethernet, ports.   
+    
+2.  The GPIO's
+	a) Use the system builtin command to control Led's and add some proper delay for 
+		example, 5 seconds.  Alternate lights every 5secs, possibly stopping after a 
+		minute.
+	b) Set GPIO's (make them visible, configure I/O direction.)
+	c) Set digital output at 0 and 1.
+	d) Release GPIO resources when done
+		(if not, GPIO's cannot be used again, you get resource error.)  
+
+3.  Develop C code and Python code for a small example case of LED sequencing.
+	Note ARM based gcc compilers and Python packages are already installed.
+
+4.  Use the sample codes for reference, however, they do not work as provided.
+
+5.  With the help of the Lab assistant, complete the circuit on a breadboard using 
+	given components and wires. Some additional components may be needed from the 
+	Circuits Lab, 3rd floor.
