@@ -8,7 +8,7 @@
 #include <wiringPi.h>
 
 // variable declaration
-const char *dataFilePath = "lab2part2data.txt";
+const char *dataFilePath = "lab2part3data.txt";
 FILE *dataFile;
 int newFileFlag = 1;
 
