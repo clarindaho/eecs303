@@ -74,7 +74,8 @@ int main(){
 
 			if (errorCount >= maxErrors){
 				fprintf(stderr, "ERROR: Failed 1000 times. Terminating program.\n");
-				setText("ERROR: Failed 1000 times. Terminating program.\n");
+				setText("ERROR: Failed 1000 times. Terminating program.");
+				setBackgroundColor(0, 0, 0);
 				return 2;
 			}
 		}
@@ -126,7 +127,7 @@ int setText(char *text){
 	// format and display text
 	int i = 0, flag = 0;
 	int lineCharCount = 0, row = 0;
-	for (i = 0; (text[i] != '\0') || (flag == 1); i++){
+	for (i = 0; (text[i] != '\0') && (flag == 0); i++){
 		if ((text[i] == '\n') || (lineCharCount >= 16)){		// if new line character encountered or character exceeds space allowed per line
 			// go to next row
 			lineCharCount = 0;
@@ -145,16 +146,14 @@ int setText(char *text){
 }
 
 void resetDisplay(int resetFlag){
-	if(resetFlag == 1){
-		// clear display
-		textCommand(0x01);
-		
-		// disable backlight
-		setBackgroundColor(0, 0, 0);
-		
-		fprintf(stderr, "NOTE: Termination of program\n");
-		exit(2);
-	}
+	// clear display
+	textCommand(0x01);
+	
+	// disable backlight
+	setBackgroundColor(0, 0, 0);
+	
+	fprintf(stderr, "NOTE: Termination of program\n");
+	exit(2);
 }
 
 int readDHTSensor(){
@@ -324,7 +323,7 @@ void printResult(){
 	
 	// display temperature and humidity on LCD screen
 	char displayText[50];
-	sprintf(displayText, "%s\n%s", temperatureData, humidityData);
+	sprintf(displayText, "T: %.3f\nH: %.3f", temperature, humidity);
 	setText(displayText);
 
 	// close data file
