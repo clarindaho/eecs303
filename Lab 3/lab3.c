@@ -61,6 +61,10 @@ int main(){
 		return 1;
 	}
 	
+	// reset display
+	textCommand(0x01);
+	setBackgroundColor(0, 0, 0);
+	
 	//
 	// Show the Raspberry Pi transaction data on the LCD display
 	//
@@ -74,7 +78,7 @@ int main(){
 
 			if (errorCount >= maxErrors){
 				fprintf(stderr, "ERROR: Failed 1000 times. Terminating program.\n");
-				setText("ERROR: Failed 1000 times. Terminating program.");
+				setText("ERROR: Failed 1000 times.");
 				setBackgroundColor(0, 0, 0);
 				return 2;
 			}
@@ -137,6 +141,11 @@ int setText(char *text){
 				flag = 1;			// truncate any remaining characters
 			else {					// if maximum number of lines not reached
 				textCommand(0xc0);	// move cursor to next line
+				
+				if(text[i] != '\n'){	// if character exceeds space allowed per line
+					lineCharCount++;
+					wiringPiI2CWriteReg8(textDisplay, 0x40, text[i]);
+				}
 			}
 		} else {
 			lineCharCount++;
