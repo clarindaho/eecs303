@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
-#include <time.h>
 #include <sys/time.h>
 #include <wiringPi.h>
 
@@ -36,6 +35,9 @@ int main(){
 		return 1;
 	}
 	
+	// configure LED pin
+	pinMode(ledPin, OUTPUT);
+	
 	//
 	// Write a loop of your C code to record temperature data for a short time
 	// If any of the temperature goes above a threshold, RPi will signal the LED to turn on
@@ -44,7 +46,7 @@ int main(){
 	int i = 0, maxReadings = 20;
 	for (i = 0; i < maxReadings; i++){
 		int maxErrors = 1000;
-		while(readDHTSensor() == 0){	// if data is wrong
+		while(readDHTSensor() == 0){				// if data is wrong
 			errorCount++;
 			delayMicroseconds(1);
 
@@ -54,12 +56,12 @@ int main(){
 			}
 		}
 		
-		if (temperature > temperatureThreshold)		// if temperature is above the threshold
+		if (temperature > temperatureThreshold)		// temperature is above the threshold
 			digitalWrite(ledPin, HIGH);
-		else										// if temperature is below the threshold
+		else										// temperature is below the threshold
 			digitalWrite(ledPin, LOW);
 			
-		delayMicroseconds(1);		// delay between each reading
+		delayMicroseconds(1);						// delay between each reading
 		errorCount = 0;
 	}
 	
@@ -81,10 +83,8 @@ int readDHTSensor(){
 	pinMode(sensorPin, INPUT);
 	while(digitalRead(sensorPin) == 0){
 		errorReadingCount++;
-		if (errorReadingCount >= 255){
-			fprintf(stderr, "ERROR: Sensor busy\n");
+		if (errorReadingCount >= 255)
 			return 0;
-		}
 
 		delayMicroseconds(1);
 	}
@@ -93,7 +93,7 @@ int readDHTSensor(){
 	// send start request to sensor
 	pinMode(sensorPin, OUTPUT);
 	digitalWrite(sensorPin, LOW);
-	delayMicroseconds(20000);			// hold low level at least 18 ms
+	delayMicroseconds(20000);						// hold low level at least 18 ms
 
 	// pull up voltage
 	digitalWrite(sensorPin, HIGH);
@@ -102,10 +102,8 @@ int readDHTSensor(){
 	pinMode(sensorPin, INPUT);
 	while (digitalRead(sensorPin) == 1){
 		errorReadingCount++;
-		if (errorReadingCount >= 255){
-			fprintf(stderr, "ERROR: No response from sensor\n");
+		if (errorReadingCount >= 255)
 			return 0;
-		}
 
 		delayMicroseconds(1);
 	}
@@ -115,9 +113,8 @@ int readDHTSensor(){
 	delayMicroseconds(80);
 	while (digitalRead(sensorPin) == 0){
 		errorReadingCount++;
-		if (errorReadingCount >= 255){
+		if (errorReadingCount >= 255)
 			return 0;
-		}
 
 		delayMicroseconds(1);
 	}
@@ -127,9 +124,8 @@ int readDHTSensor(){
 	delayMicroseconds(77);
 	while (digitalRead(sensorPin) == 1){
 		errorReadingCount++;
-		if (errorReadingCount >= 255){
+		if (errorReadingCount >= 255)
 			return 0;
-		}
 		
 		delayMicroseconds(1);
 	}
@@ -142,10 +138,8 @@ int readDHTSensor(){
 		data[i] = readDataByte();
 		dataSum += data[i];
 		
-		if (data[i] == -1){
-			fprintf(stderr, "ERROR: Error reading data from sensor\n");
+		if (data[i] == -1)
 			return 0;
-		}
 	}
 
 	humidity = data[0] + (data[1] * pow(10, -3));
@@ -157,15 +151,13 @@ int readDHTSensor(){
 
 	// verify the transaction output using its checksum data
 	unsigned dataChecksum = dataSum & 0xFF;
-	if (dataChecksum == data[5]){		// data matches with checksum
+	if (dataChecksum == data[5]){					// data matches with checksum
 		// return the temperature and humidity output
 		printResult();
 
 		return 1;
-	} else {				// data does not match with checksum
-		fprintf(stderr, "ERROR: Data does not match with checksum\n");
+	} else											// data does not match with checksum
 		return 0;
-	}
 }
 
 int readDataByte(){
@@ -179,9 +171,8 @@ int readDataByte(){
 	int i = 0, dataByte = 0;
 	for (i = 0; i < 8; i++){
 		// bitwise left shift
-		if (i != 0){
+		if (i != 0)
 			dataByte = dataByte << 1;
-		}
 		
 		// wait for 50 us low voltage separation to end
 		delayMicroseconds(45);
@@ -189,16 +180,15 @@ int readDataByte(){
 		int errorReadingCount = 0;
 		while(digitalRead(sensorPin) == 0){
 			errorReadingCount++;
-			if (errorReadingCount >= 255){
+			if (errorReadingCount >= 255)
 				return -1;
-			}
 
 			delayMicroseconds(1);
 		}
 
 		// wait for 40 us to see if the bit is 0 or 1
 		delayMicroseconds(40);
-		if (digitalRead(sensorPin) != 0){		// bit '1'
+		if (digitalRead(sensorPin) != 0){			// bit '1'
 			dataByte += 1;	
 			delayMicroseconds(30);
 		}

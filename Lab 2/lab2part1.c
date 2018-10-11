@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
-#include <time.h>
+#include <sys/time.h>
 #include <wiringPi.h>
 
 // variable declaration
@@ -36,7 +36,7 @@ int main(){
 	//
 
 	int maxErrors = 1000;
-	while(readDHTSensor() == 0){	// if data is wrong
+	while(readDHTSensor() == 0){		// if data is wrong
 		errorCount++;
 		delayMicroseconds(1);
 
@@ -64,10 +64,8 @@ int readDHTSensor(){
 	pinMode(sensorPin, INPUT);
 	while(digitalRead(sensorPin) == 0){
 		errorReadingCount++;
-		if (errorReadingCount >= 255){
-			fprintf(stderr, "ERROR: Sensor busy\n");
+		if (errorReadingCount >= 255)
 			return 0;
-		}
 
 		delayMicroseconds(1);
 	}
@@ -85,10 +83,8 @@ int readDHTSensor(){
 	pinMode(sensorPin, INPUT);
 	while (digitalRead(sensorPin) == 1){
 		errorReadingCount++;
-		if (errorReadingCount >= 255){
-			fprintf(stderr, "ERROR: No response from sensor\n");
+		if (errorReadingCount >= 255)
 			return 0;
-		}
 
 		delayMicroseconds(1);
 	}
@@ -98,9 +94,8 @@ int readDHTSensor(){
 	delayMicroseconds(80);
 	while (digitalRead(sensorPin) == 0){
 		errorReadingCount++;
-		if (errorReadingCount >= 255){
+		if (errorReadingCount >= 255)
 			return 0;
-		}
 
 		delayMicroseconds(1);
 	}
@@ -110,9 +105,8 @@ int readDHTSensor(){
 	delayMicroseconds(77);
 	while (digitalRead(sensorPin) == 1){
 		errorReadingCount++;
-		if (errorReadingCount >= 255){
+		if (errorReadingCount >= 255)
 			return 0;
-		}
 		
 		delayMicroseconds(1);
 	}
@@ -125,10 +119,8 @@ int readDHTSensor(){
 		data[i] = readDataByte();
 		dataSum += data[i];
 		
-		if (data[i] == -1){
-			fprintf(stderr, "ERROR: Error reading data from sensor\n");
+		if (data[i] == -1)
 			return 0;
-		}
 	}
 
 	humidity = data[0] + (data[1] * pow(10, -3));
@@ -145,10 +137,8 @@ int readDHTSensor(){
 		printResult();
 
 		return 1;
-	} else {				// data does not match with checksum
-		fprintf(stderr, "ERROR: Data does not match with checksum\n");
+	} else								// data does not match with checksum
 		return 0;
-	}
 }
 
 int readDataByte(){
@@ -162,9 +152,8 @@ int readDataByte(){
 	int i = 0, dataByte = 0;
 	for (i = 0; i < 8; i++){
 		// bitwise left shift
-		if (i != 0){
+		if (i != 0)
 			dataByte = dataByte << 1;
-		}
 		
 		// wait for 50 us low voltage separation to end
 		delayMicroseconds(45);
@@ -172,9 +161,8 @@ int readDataByte(){
 		int errorReadingCount = 0;
 		while(digitalRead(sensorPin) == 0){
 			errorReadingCount++;
-			if (errorReadingCount >= 255){
+			if (errorReadingCount >= 255)
 				return -1;
-			}
 
 			delayMicroseconds(1);
 		}

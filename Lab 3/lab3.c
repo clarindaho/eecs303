@@ -18,9 +18,6 @@ double temperature;
 double humidity;
 int errorCount = 0;
 
-int lastState = HIGH;
-struct timeval startTime;
-
 const double temperatureThreshold = 27;
 
 int backLightI2CAddress = 0x62;
@@ -72,24 +69,26 @@ int main(){
 	int i = 0, maxReadings = 20;
 	for (i = 0; i < maxReadings; i++){
 		int maxErrors = 1000;
-		while(readDHTSensor() == 0){	// if data is wrong
+		while(readDHTSensor() == 0){				// if data is wrong
 			errorCount++;
 			delayMicroseconds(1);
 
 			if (errorCount >= maxErrors){
 				fprintf(stderr, "ERROR: Failed 1000 times. Terminating program.\n");
+				
 				setText("ERROR: Failed 1000 times.");
 				setBackgroundColor(0, 0, 0);
+				
 				return 2;
 			}
 		}
 		
-		if (temperature > temperatureThreshold)		// if temperature is above the threshold
+		if (temperature > temperatureThreshold)		// temperature is above the threshold
 			setBackgroundColor(255, 0, 0);
-		else										// if temperature is below the threshold
+		else										// temperature is below the threshold
 			setBackgroundColor(0, 0, 255);
 			
-		delayMicroseconds(1);		// delay between each reading
+		delayMicroseconds(1);						// delay between each reading
 		errorCount = 0;
 	}
 	
@@ -124,25 +123,25 @@ int setText(char *text){
 	delay(50);
 	
 	// setup display formatting
-	textCommand(0x08 | 0x04);		// turn display on with no cursor
-	textCommand(0x28);				// display two lines
+	textCommand(0x08 | 0x04);			// turn display on with no cursor
+	textCommand(0x28);					// display two lines
 	delay(50);
 	
 	// format and display text
 	int i = 0, flag = 0;
 	int lineCharCount = 0, row = 0;
 	for (i = 0; (text[i] != '\0') && (flag == 0); i++){
-		if ((text[i] == '\n') || (lineCharCount >= 16)){		// if new line character encountered or character exceeds space allowed per line
+		if ((text[i] == '\n') || (lineCharCount >= 16)){		// new line character encountered or character exceeds space allowed per line
 			// go to next row
 			lineCharCount = 0;
 			row++;
 			
-			if (row == 2)			// if maximum number of lines reached
-				flag = 1;			// truncate any remaining characters
-			else {					// if maximum number of lines not reached
-				textCommand(0xc0);	// move cursor to next line
+			if (row == 2)				// maximum number of lines reached
+				flag = 1;				// truncate any remaining characters
+			else {						// maximum number of lines not reached
+				textCommand(0xc0);		// move cursor to next line
 				
-				if(text[i] != '\n'){	// if character exceeds space allowed per line
+				if(text[i] != '\n'){	// character exceeds space allowed per line
 					lineCharCount++;
 					wiringPiI2CWriteReg8(textDisplay, 0x40, text[i]);
 				}
@@ -162,7 +161,7 @@ void resetDisplay(int resetFlag){
 	setBackgroundColor(0, 0, 0);
 	
 	fprintf(stderr, "NOTE: Termination of program\n");
-	exit(2);
+	exit(3);
 }
 
 int readDHTSensor(){
@@ -176,10 +175,8 @@ int readDHTSensor(){
 	pinMode(sensorPin, INPUT);
 	while(digitalRead(sensorPin) == 0){
 		errorReadingCount++;
-		if (errorReadingCount >= 255){
-			fprintf(stderr, "ERROR: Sensor busy\n");
+		if (errorReadingCount >= 255)
 			return 0;
-		}
 
 		delayMicroseconds(1);
 	}
@@ -197,10 +194,8 @@ int readDHTSensor(){
 	pinMode(sensorPin, INPUT);
 	while (digitalRead(sensorPin) == 1){
 		errorReadingCount++;
-		if (errorReadingCount >= 255){
-			fprintf(stderr, "ERROR: No response from sensor\n");
+		if (errorReadingCount >= 255)
 			return 0;
-		}
 
 		delayMicroseconds(1);
 	}
@@ -210,9 +205,8 @@ int readDHTSensor(){
 	delayMicroseconds(80);
 	while (digitalRead(sensorPin) == 0){
 		errorReadingCount++;
-		if (errorReadingCount >= 255){
+		if (errorReadingCount >= 255)
 			return 0;
-		}
 
 		delayMicroseconds(1);
 	}
@@ -222,9 +216,8 @@ int readDHTSensor(){
 	delayMicroseconds(77);
 	while (digitalRead(sensorPin) == 1){
 		errorReadingCount++;
-		if (errorReadingCount >= 255){
+		if (errorReadingCount >= 255)
 			return 0;
-		}
 		
 		delayMicroseconds(1);
 	}
@@ -237,10 +230,8 @@ int readDHTSensor(){
 		data[i] = readDataByte();
 		dataSum += data[i];
 		
-		if (data[i] == -1){
-			fprintf(stderr, "ERROR: Error reading data from sensor\n");			
+		if (data[i] == -1)
 			return 0;
-		}
 	}
 
 	humidity = data[0] + (data[1] * pow(10, -3));
@@ -257,10 +248,8 @@ int readDHTSensor(){
 		printResult();
 
 		return 1;
-	} else {							// data does not match with checksum
-		fprintf(stderr, "ERROR: Data does not match with checksum\n");		
+	} else								// data does not match with checksum
 		return 0;
-	}
 }
 
 int readDataByte(){
@@ -274,9 +263,8 @@ int readDataByte(){
 	int i = 0, dataByte = 0;
 	for (i = 0; i < 8; i++){
 		// bitwise left shift
-		if (i != 0){
+		if (i != 0)
 			dataByte = dataByte << 1;
-		}
 		
 		// wait for 50 us low voltage separation to end
 		delayMicroseconds(45);
@@ -284,9 +272,8 @@ int readDataByte(){
 		int errorReadingCount = 0;
 		while(digitalRead(sensorPin) == 0){
 			errorReadingCount++;
-			if (errorReadingCount >= 255){
+			if (errorReadingCount >= 255)
 				return -1;
-			}
 
 			delayMicroseconds(1);
 		}

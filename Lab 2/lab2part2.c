@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
-#include <time.h>
 #include <sys/time.h>
 #include <wiringPi.h>
 
@@ -38,7 +37,7 @@ int main(){
 	//
  	
 	int maxErrors = 1000;
-	while(readDHTSensor() == 0){	// if data is wrong
+	while(readDHTSensor() == 0){		// if data is wrong
 		errorCount++;
 		delayMicroseconds(1);
 
@@ -66,10 +65,8 @@ int readDHTSensor(){
 	pinMode(sensorPin, INPUT);
 	while(digitalRead(sensorPin) == 0){
 		errorReadingCount++;
-		if (errorReadingCount >= 255){
-			fprintf(stderr, "ERROR: Sensor busy\n");
+		if (errorReadingCount >= 255)
 			return 0;
-		}
 
 		delayMicroseconds(1);
 	}
@@ -93,10 +90,8 @@ int readDHTSensor(){
 	for (j = 0; j < 3; j++){ 
 		while (digitalRead(sensorPin) == lastState){
 			errorReadingCount++;
-			if (errorReadingCount >= 255){
-				fprintf(stderr, "ERROR: No response from sensor\n");
+			if (errorReadingCount >= 255)
 				return 0;
-			}
 
 			delayMicroseconds(1);
 		}
@@ -114,10 +109,8 @@ int readDHTSensor(){
 		data[i] = readDataByte();
 		dataSum += data[i];
 		
-		if (data[i] == -1){
-			fprintf(stderr, "ERROR: Error reading data from sensor\n");
+		if (data[i] == -1)
 			return 0;
-		}
 	}
  
 	humidity = data[0] + (data[1] * pow(10, -3));
@@ -134,10 +127,8 @@ int readDHTSensor(){
 		printResult();
 
 		return 1;
-	} else {				// data does not match with checksum
-		fprintf(stderr, "ERROR: Data does not match with checksum\n");
+	} else								// data does not match with checksum
 		return 0;
-	}
 }
 
 int readDataByte(){	
@@ -154,9 +145,8 @@ int readDataByte(){
 		int errorReadingCount = 0;
 		while(digitalRead(sensorPin) == lastState){
 			errorReadingCount++;
-			if (errorReadingCount >= 255){
+			if (errorReadingCount >= 255)
 				return -1;
-			}
 
 			delayMicroseconds(1);
 		}
@@ -165,7 +155,7 @@ int readDataByte(){
 		if (lastState == LOW){
 			// determine if the bit is 0 or 1
 			gettimeofday(&stopTime, NULL);
-			if ((stopTime.tv_usec - startTime.tv_usec - 50) > 40)
+			if ((stopTime.tv_usec - startTime.tv_usec - 50) > 40)	// bit '1'
 				dataByte += 1;
 			
 			if(i < 14){
