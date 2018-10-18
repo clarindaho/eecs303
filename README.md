@@ -11,3 +11,6 @@
 
 ### Lab 4 - LED Lights Sequencing on the Raspberry Pi
 - Written using Assembly
+
+### Lab 5 - Using Arduino Uno with Raspberry Pi 3
+- Test example Arduino sketches
