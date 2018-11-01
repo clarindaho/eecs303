@@ -1,15 +1,13 @@
 all: part1 part2
 
 part1:
-	as -o lab4part1.o lab4part1.s
-	gcc -o lab4part1 lab4part1.o
+	gcc -o lab4part1 lab4part1.s -Wall -lwiringPi
 
 part2:
-	as -o lab4part2.o lab4part2.s
-	gcc -o lab4part2 lab4part2.o
+	gcc -c lab4part2.c
+	gcc lab4part2.s lab4part2.o -lwiringPi -lpthread -o lab4part2
 	
 clean:
-	rm lab4part1.o
 	rm lab4part1
 	rm lab4part2.o
 	rm lab4part2
