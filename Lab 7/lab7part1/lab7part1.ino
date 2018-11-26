@@ -10,6 +10,7 @@ int maintenanceButton = 2;  // Maintenance Button
 // variables
 volatile int maintenanceFlag = 0;    // maintenance flag
 int state = 1;
+int prevState = 2;
 
 void setup(){ 
   // configure pin to input or output
@@ -20,6 +21,7 @@ void setup(){
   pinMode(maintenanceButton, INPUT_PULLUP);
 
   state = 1;
+  prevState = 2;
   maintenanceFlag = 0;
   attachInterrupt((maintenanceButton - 2), maintenanceInterrupt, RISING);
 }
@@ -53,9 +55,9 @@ void delayAll(){
 
   // change state
   if (maintenanceFlag == 0){
-    if (state == 1)
+    if (prevState == 1)
       state = 2;
-    else if (state == 2)
+    else if (prevState == 2)
       state = 1;
     else            // default state
       state = 1;
@@ -104,9 +106,11 @@ void loop(){
     maintenance();
     break; 
   case 1:    // street A green
-    cycle(greenA, redA, greenB, redB);
+    prevState = 1;
+    cycle(greenA, redA, greenB, redB); 
     break;
   case 2:    // street B green
+    prevState = 2;
     cycle(greenB, redB, greenA, redA);
     break;
   case 3:    // delay state
@@ -114,6 +118,7 @@ void loop(){
     break;
   default:   // street A green
     state = 1;
+    prevState = 2;
     break;
   }
 }
