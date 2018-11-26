@@ -40,6 +40,30 @@ void setOff(int pin){
   analogWrite(pin, 0);
 }
 
+void delayAll(){
+  // Street A and B are red
+  
+  setFull(redA);
+  setOff(greenA);
+
+  setFull(redB);
+  setOff(greenB);
+
+  delay(2000);      // delay 2 seconds
+
+  // change state
+  if (maintenanceFlag == 0){
+    if (state == 1)
+      state = 2;
+    else if (state == 2)
+      state = 1;
+    else            // default state
+      state = 1;
+  }
+  else
+    state = 0;
+}
+
 void cycle(int green1, int red1, int green2, int red2){
   // Street 1 is green
 
@@ -54,21 +78,8 @@ void cycle(int green1, int red1, int green2, int red2){
   setHalf(green1);  // fade Green 1 for warning
   delay(2000);      // delay 2 seconds
 
-  setFull(red1);    // turn on Red 1 for safety
-  setOff(green1);
-  delay(2000);      // delay 2 seconds
-
   // change state
-  if (maintenanceFlag == 0){
-    if (state == 1)
-      state = 2;
-    else if (state == 2)
-      state = 1;
-    else            // default state
-      state = 1;
-  }
-  else
-    state = 0;
+  state = 3;
 }
 
 void maintenance(){
@@ -98,10 +109,11 @@ void loop(){
   case 2:    // street B green
     cycle(greenB, redB, greenA, redA);
     break;
+  case 3:    // delay state
+    delayAll();
+    break;
   default:   // street A green
     state = 1;
     break;
   }
 }
-
-

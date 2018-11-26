@@ -25,6 +25,7 @@ void setup(){
   pinMode(pedestrianBButton, INPUT_PULLUP);
 
   state = 1;
+  pedestrianFlag = 0;
   attachInterrupt((pedestrianAButton - 2), pedestrianAInterrupt, RISING);
   attachInterrupt((pedestrianBButton - 2), pedestrianBInterrupt, RISING);
 }
@@ -73,6 +74,7 @@ void setOff(int pin){
 
 void delayAll(){
   // Street A and B are red
+  
   setFull(redA);
   setOff(greenA);
   
@@ -136,23 +138,24 @@ void cycle(int green1, int red1, int green2, int red2, int pedestrianLightOn){
   setOff(green2);
 
   if (pedestrianLightOn == 1)
-    delay(16000);
+    delay(16000);     // delay 16 seconds
   else
     delay(8000);      // delay 8 seconds
 
-  setHalf(green1);  // fade Green 1 for warning
+  setHalf(green1);    // fade Green 1 for warning
   
   if(pedestrianLightOn == 1)
-    delay(4000);
+    delay(4000);      // delay 4 seconds
   else
     delay(2000);      // delay 2 seconds
 
+  // change state
   state = 0;
 }
 
 void loop(){
   switch(state){
-  case 0:    // street A and B red
+  case 0:    // delay state
     delayAll();
     break;
   case 1:    // street A green and no pedestrian
