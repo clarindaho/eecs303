@@ -12,7 +12,7 @@ int pedestrianBButton = 3;  // Pedestrian B Button
 // variables
 volatile int pedestrianFlag = 0;  // Pedestrian Flag
 int state = 1;
-int prevState = 2;
+int prevState = 1;
 
 void setup(){ 
   // configure pin to input or output
@@ -26,7 +26,7 @@ void setup(){
   pinMode(pedestrianBButton, INPUT_PULLUP);
 
   state = 1;
-  prevState = 2;
+  prevState = 1;
   pedestrianFlag = 0;
   attachInterrupt((pedestrianAButton - 2), pedestrianAInterrupt, RISING);
   attachInterrupt((pedestrianBButton - 2), pedestrianBInterrupt, RISING);
@@ -178,7 +178,7 @@ void loop(){
     break;
   default:   // street A green and no pedestrian
     state = 1;
-    prevState = 2;
+    prevState = 1;
     break;
   }
 }
